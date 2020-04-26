@@ -20,18 +20,36 @@ data = []
 labels = []
 
 imagePaths = list(paths.list_images('./data'))
+
+import os
+
+path = './data'
+
+files = []
+# r=root, d=directories, f = files
+for r, d, f in os.walk(path):
+    for file in f:
+        if '.ppm' in file:
+            files.append(os.path.join(r, file))
+print(files)
 # loop over the image paths
-for imagePath in imagePaths:
+for imagePath in files:
+    # print(imagePaths)
     label = imagePath.split(os.path.sep)[-2]
     image = cv2.imread(imagePath, 1)
-    image = cv2.resize(image, (64, 64))
+    image = cv2.resize(image, (32, 32))
     # image = image/255.0
     # fd, hog_image = hog(image, orientations=8, pixels_per_cell=(16, 16),
     #                 cells_per_block=(1, 1), visualize=True, multichannel=True)
     # print(image)
     data.append(image)
     labels.append(label)
-#print(labels)
+# print(labels)
+
+
+
+
+
 le = preprocessing.LabelEncoder()
 le.fit(labels)
 labels = le.transform(labels)
@@ -43,10 +61,8 @@ x_train = data.astype('float32')
 x_train /= 255
 y_train = np_utils.to_categorical(labels, 10)
 print(y_train)
-img_width, img_height = 64, 64
+img_width, img_height = 32, 32
 
-train_data_dir = 'data/train'
-validation_data_dir = 'data/test'
 nb_train_samples = 5000
 nb_validation_samples = 150
 epochs = 150
